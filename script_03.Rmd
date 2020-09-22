@@ -40,19 +40,33 @@ sep_old <-
          title = course_title,
          name = course_name,
          department = course_department) %>% 
-  filter(u_grad > 10)
+  filter(u_grad > 10) %>%
+  group_by(title, name, department, id) %>%
+  summarize(u_grad = sum(u_grad), .groups = "drop")
 
 # But this is not correct! Look for Gov 50: Data. What do you see? What can you
 # do to clean it up?
 ```
 
-
-
-
 ### Scene 1
 
 **Prompt:** Read in and clean the new data, creating an object called `sep_new`. 
 
+```{r}
+sep_new <- 
+  read_excel("new_data/class_enrollment.xlsx", skip = 3) %>% 
+  clean_names() %>% 
+  filter(! is.na(course_title)) %>% 
+  select(-grad, -non_degree, -x_reg, -vus, -employee, 
+         -withdraw, -total, -instructor_full_name, -course_section_code) %>%
+  rename(id = course_id,
+         title = course_title,
+         name = course_name,
+         department = course_department) %>% 
+  filter(u_grad > 10) %>%
+  group_by(title, name, department, id) %>%
+  summarize(u_grad = sum(u_grad), .groups = "drop")
+```
 
 
 ### Scene 2
@@ -60,16 +74,23 @@ sep_old <-
 **Prompt:** Dean Amanda Claybaugh is concerned about the drop in undergradaute enrollment in some courses between September 1 and today. She wants you to analyze this issue. Before you dive into the details, provide some bullet points as to how Wisdom and Temperance apply to this situation. Every student should have several bullet points. Someone will be asked to share their screen and discuss.
 
 Before we start on the model, Wisdom suggests we should:
-
+- stepping back and looking at the broader picture, does this affect my analysis?
+- what was wrong with the first weeks of a particular class that many people dropped? 
+- do number connect to the thing that we are really interested in? 
+- what is the Dean really concerned about and how can we make our code reflect that? 
+- why is someone interested in the changes in course enrollment
 
 After we have a model, Temperance suggests we should:
-
-
+- recognize the number are hard to use to interpret students' mentalities
+- understand that there might be external circumstances affecting students' decisions
 
 ### Scene 3
 
 **Prompt:** Which classes had the biggest increases and decreases in undergraduate enrollments between September 1 and today? Make a graphic that shows the 5 biggest increases and decreases. Make it look nice.
 
+```{r}
+left_join(sep_old, sep_new)
+```
 
 
 
