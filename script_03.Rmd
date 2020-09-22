@@ -89,7 +89,9 @@ After we have a model, Temperance suggests we should:
 **Prompt:** Which classes had the biggest increases and decreases in undergraduate enrollments between September 1 and today? Make a graphic that shows the 5 biggest increases and decreases. Make it look nice.
 
 ```{r}
-left_join(sep_old, sep_new)
+left_join(sep_old, sep_new,
+          by = "id",
+          suffix = c("_old", "_new"))
 ```
 
 
